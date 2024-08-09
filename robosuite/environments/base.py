@@ -10,6 +10,7 @@ import robosuite.utils.sim_utils as SU
 from robosuite.renderers.base import load_renderer_config
 from robosuite.utils import OpenCVRenderer, SimulationError, XMLError
 from robosuite.utils.binding_utils import MjRenderContextOffscreen, MjSim
+import mujoco.viewer as view
 
 REGISTERED_ENVS = {}
 
@@ -98,6 +99,7 @@ class MujocoEnv(metaclass=EnvMeta):
         hard_reset=True,
         renderer="mujoco",
         renderer_config=None,
+        mujoco_passive_viewer=False,
     ):
         # If you're using an onscreen renderer, you must be also using an offscreen renderer!
         if has_renderer and not has_offscreen_renderer:
@@ -112,6 +114,7 @@ class MujocoEnv(metaclass=EnvMeta):
         self.render_visual_mesh = render_visual_mesh
         self.render_gpu_device_id = render_gpu_device_id
         self.viewer = None
+        self.mujoco_passive_viewer = mujoco_passive_viewer
 
         # Simulation-specific attributes
         self._observables = {}  # Maps observable names to observable objects
@@ -135,6 +138,9 @@ class MujocoEnv(metaclass=EnvMeta):
 
         # Initialize the simulation
         self._initialize_sim()
+
+        # Initialize MuJoCo passive viewer
+        self._initialize_mujoco_passive_viewer()
 
         # initializes the rendering
         self.initialize_renderer()
@@ -213,6 +219,16 @@ class MujocoEnv(metaclass=EnvMeta):
         """
         return OrderedDict()
 
+    def _initialize_mujoco_passive_viewer(self):
+        self.mujoco_passive_viewer_instance = None
+        # Initialize MuJoCo passive viewer
+        if self.mujoco_passive_viewer:
+            self.mujoco_passive_viewer_instance = view.launch_passive(self.sim.model._model, self.sim.data._data)
+
+    def sync_mujoco_passive_viewer(self):
+        if self.mujoco_passive_viewer_instance is not None:
+            self.mujoco_passive_viewer_instance.sync()
+
     def _initialize_sim(self, xml_string=None):
         """
         Creates a MjSim object and stores it in self.sim. If @xml_string is specified, the MjSim object will be created
@@ -247,9 +263,11 @@ class MujocoEnv(metaclass=EnvMeta):
         if self.hard_reset and not self.deterministic_reset:
             if self.renderer == "mujoco" or self.renderer == "default":
                 self._destroy_viewer()
+                self._destroy_mujoco_passive_viewer()
                 self._destroy_sim()
             self._load_model()
             self._initialize_sim()
+            self._initialize_mujoco_passive_viewer()
         # Else, we only reset the sim internally
         else:
             self.sim.reset()
@@ -392,6 +410,7 @@ class MujocoEnv(metaclass=EnvMeta):
             self.sim.forward()
             self._pre_action(action, policy_step)
             self.sim.step()
+            self.sync_mujoco_passive_viewer()
             self._update_observables()
             policy_step = False
 
@@ -556,6 +575,9 @@ class MujocoEnv(metaclass=EnvMeta):
         # initialize sim from xml
         self._initialize_sim(xml_string=xml_string)
 
+        # Initialize MuJoCo passive viewer
+        self._initialize_mujoco_passive_viewer()
+
         # Now reset as normal
         self.reset()
 
@@ -665,9 +687,18 @@ class MujocoEnv(metaclass=EnvMeta):
             self.sim.free()
             self.sim = None
 
+    def _destroy_mujoco_passive_viewer(self):
+        """
+        Destroys the current MuJoCo passive viewer instance if it exists
+        """
+        if self.mujoco_passive_viewer_instance is not None:
+            self.mujoco_passive_viewer_instance.close()
+            self.mujoco_passive_viewer_instance = None
+
     def close(self):
         """Do any cleanup necessary here."""
         self._destroy_viewer()
+        self._destroy_mujoco_passive_viewer()
         self._destroy_sim()
 
     @property

@@ -160,6 +160,7 @@ class ToolHang(SingleArmEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mujoco",
         renderer_config=None,
+        mujoco_passive_viewer=False,
     ):
         # settings for table top
         self.table_full_size = table_full_size
@@ -198,6 +199,7 @@ class ToolHang(SingleArmEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
+            mujoco_passive_viewer=mujoco_passive_viewer,
         )
 
     def reward(self, action=None):
