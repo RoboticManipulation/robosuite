@@ -224,9 +224,33 @@ class MujocoEnv(metaclass=EnvMeta):
         # Initialize MuJoCo passive viewer
         if self.mujoco_passive_viewer:
             self.mujoco_passive_viewer_instance = view.launch_passive(self.sim.model._model, self.sim.data._data)
+            if self.sim.model.hfield_data is not None:
+                self.mujoco_passive_viewer_instance.update_hfield(0)
+            
+            # Update multiple height fields
+            # # Assuming self.sim.model._model refers to your model object
+            # model = self.sim.model._model
+
+            # # Ensure there is at least one height field
+            # if model.nhfield > 0:
+            #     hfield_names = []
+            #     for i in range(model.nhfield):
+            #         start_index = model.name_hfieldadr[i]
+            #         end_index = model.names.find(b'\x00', start_index)
+            #         name = model.names[start_index:end_index].decode('utf-8')
+            #         hfield_names.append(name)
+
+            #     # Create a dictionary of hfield names and their corresponding IDs
+            #     hfield_dict = dict(zip(hfield_names, range(model.nhfield)))
+                
+            #     # Update all height fields
+            #     for hfield_id in hfield_dict.values():
+            #         self.mujoco_passive_viewer_instance.update_hfield(hfield_id)
 
     def sync_mujoco_passive_viewer(self):
         if self.mujoco_passive_viewer_instance is not None:
+            if self.sim.model.hfield_data is not None:
+                self.mujoco_passive_viewer_instance.update_hfield(0)
             self.mujoco_passive_viewer_instance.sync()
 
     def _initialize_sim(self, xml_string=None):
