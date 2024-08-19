@@ -1124,6 +1124,8 @@ class MjSim:
 
         assert mode == "offscreen", "only offscreen supported for now"
         assert self._render_context_offscreen is not None
+        if self.model._model.hfield_data is not None:
+            mujoco.mjr_uploadHField(self.model._model, self._render_context_offscreen.con, 0)
         with _MjSim_render_lock:
             self._render_context_offscreen.render(
                 width=width, height=height, camera_id=camera_id, segmentation=segmentation

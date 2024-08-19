@@ -224,7 +224,7 @@ class MujocoEnv(metaclass=EnvMeta):
         # Initialize MuJoCo passive viewer
         if self.mujoco_passive_viewer:
             self.mujoco_passive_viewer_instance = view.launch_passive(self.sim.model._model, self.sim.data._data)
-            if self.sim.model.hfield_data is not None:
+            if self.sim.model._model.hfield_data is not None:
                 self.mujoco_passive_viewer_instance.update_hfield(0)
             
             # Update multiple height fields
@@ -249,7 +249,7 @@ class MujocoEnv(metaclass=EnvMeta):
 
     def sync_mujoco_passive_viewer(self):
         if self.mujoco_passive_viewer_instance is not None:
-            if self.sim.model.hfield_data is not None:
+            if self.sim.model._model.hfield_data is not None:
                 self.mujoco_passive_viewer_instance.update_hfield(0)
             self.mujoco_passive_viewer_instance.sync()
 
