@@ -120,6 +120,15 @@
                                         <!-- This camera points out from the eef. -->
                                         <camera mode="fixed" name="eye_in_hand" pos="0.05 0 0" quat="0 0.707108 0.707108 0" fovy="75"/>
                                         <!-- To add gripper -->
+                                        <!-- Visualize the coordinate frame -->
+                                        <!-- X axis (Red), Y axis (Green), Z axis (Blue) -->
+                                        <!--
+                                        <body name="tcp_frame" pos="0 0 0">
+                                            <geom type="cylinder" fromto="0 0 0 0.1 0 0" size="0.005" rgba="1 0 0 1" group="1"/>
+                                            <geom type="cylinder" fromto="0 0 0 0 0.1 0" size="0.005" rgba="0 1 0 1" group="1"/>
+                                            <geom type="cylinder" fromto="0 0 0 0 0 0.1" size="0.005" rgba="0 0 1 1" group="1"/>
+                                        </body>
+                                        -->
                                     </body>
                                 </body>
                             </body>
