@@ -11,6 +11,29 @@ from robosuite.wrappers import Wrapper
 
 from collections import OrderedDict
 
+class IndexEnvWrapper(Wrapper, gym.Env):
+
+    def __init__(self, env, index, keys=None):
+        # Run super method
+        # super().__init__(env=env)
+        super().__init__(env=env)
+        # super(IndexEnvWrapper, self).__init__(env=env)
+        self.index = index
+
+    # def __init__(self, env, index):
+    #     super(IndexEnvWrapper, self).__init__(env)
+    #     self.index = index
+
+    def reset(self, **kwargs):
+        # Pass all arguments to the underlying environment's reset method
+        return self.env.reset(**kwargs)
+    
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        info["env_index"] = self.index  # Include environment index in info
+        return obs, reward, terminated, truncated, info
+    
+
 """
 This file implements a wrapper for facilitating compatibility with OpenAI gym.
 This is useful when using these environments with code that assumes a gym-like
@@ -96,7 +119,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
-        return ob_dict
+        return ob_dict, {}
 
     def step(self, action):
         """

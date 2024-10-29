@@ -6,5 +6,7 @@ from robosuite.wrappers.visualization_wrapper import VisualizationWrapper
 
 try:
     from robosuite.wrappers.gym_wrapper import GymWrapper
+    from robosuite.wrappers.gym_wrapper import GymWrapperDictObs
+    from robosuite.wrappers.gym_wrapper import IndexEnvWrapper
 except:
     print("Warning: make sure gym is installed if you want to use the GymWrapper.")
