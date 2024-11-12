@@ -63,9 +63,6 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
         self.name = robots + "_" + type(self.env).__name__
 
-        # Get reward range
-        self.reward_range = (0, self.env.reward_scale)
-
         if keys is None:
             keys = []
             # Add object obs if requested
@@ -184,9 +181,6 @@ class GymWrapper(Wrapper, gym.Env):
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
         self.name = robots + "_" + type(self.env).__name__
-
-        # Get reward range
-        self.reward_range = (0, self.env.reward_scale)
 
         if keys is None:
             keys = []
