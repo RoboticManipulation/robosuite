@@ -453,6 +453,11 @@ class MujocoEnv(metaclass=EnvMeta):
             self.viewer.update()
 
         observations = self.viewer._get_observations() if self.viewer_get_obs else self._get_observations()
+        for key, value in observations.items():
+            if np.isnan(value).any():
+                print(f"NaN detected in observation '{key}'!")
+                print(f"Observation '{key}': {value}")
+
         return observations, reward, done, info
 
     def _pre_action(self, action, policy_step=False):
