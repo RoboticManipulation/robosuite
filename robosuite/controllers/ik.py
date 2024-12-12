@@ -432,6 +432,7 @@ class InverseKinematicsController(JointVelocityController):
         return velocities
 
     def inverse_kinematics(self, target_position, target_orientation):
+    # def inverse_kinematics(self, target_position, target_orientation, lock_rpy_ori=[False, False, False], neutral_rpy_ori=[0.0, 0.0, -((3/4)*np.pi)]):
         """
         Helper function to do inverse kinematics for a given target position and
         orientation in the PyBullet world frame.
@@ -443,6 +444,16 @@ class InverseKinematicsController(JointVelocityController):
         Returns:
             list: list of size @num_joints corresponding to the joint angle solution.
         """
+        # lock_rpy_ori = [True, True, True]
+        # if any(lock_rpy_ori) == True:
+        #     current_eef_orn_in_world = np.array(p.getLinkState(self.ik_robot, self.bullet_ee_idx, physicsClientId=self.bullet_server_id)[1])
+        #     # current_ori_rpy = np.array(p.getEulerFromQuaternion(current_eef_orn_in_world))
+        #     target_ori_rpy = np.array(p.getEulerFromQuaternion(target_orientation))
+        #     for i, lock in enumerate(lock_rpy_ori):
+        #         if lock:
+        #             target_ori_rpy[i] = neutral_rpy_ori[i] # current_ori_rpy[i]
+        #     target_orientation = p.getQuaternionFromEuler(target_ori_rpy)
+            
         ik_solution = list(
             p.calculateInverseKinematics(
                 bodyUniqueId=self.ik_robot,
@@ -486,7 +497,7 @@ class InverseKinematicsController(JointVelocityController):
             targets = (self.ee_pos + dpos + self.ik_robot_target_pos_offset, T.mat2quat(rotation))
         else:
             targets = (self.ik_robot_target_pos + dpos, T.mat2quat(rotation))
-
+        
         # convert from target pose in base frame to target pose in bullet world frame
         world_targets = self.bullet_base_pose_to_world_pose(targets)
 
