@@ -85,6 +85,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             elif key == "eef_quat":
                 for idx in range(len(self.env.robots)):
                     self.keys.append("robot{}_eef_quat".format(idx))
+            elif key == "eef_vel_lin":
+                for idx in range(len(self.env.robots)):
+                    self.keys.append("robot{}_eef_vel_lin".format(idx))
+            elif key == "eef_vel_ang":
+                for idx in range(len(self.env.robots)):
+                    self.keys.append("robot{}_eef_vel_ang".format(idx))
             else:
                 self.keys.append(key)
 
