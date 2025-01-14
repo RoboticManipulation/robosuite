@@ -56,7 +56,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None):
         # Run super method
         super().__init__(env=env)
         # Create name for gym
@@ -64,35 +64,29 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         self.name = robots + "_" + type(self.env).__name__
 
         self.observation_keys = keys
+        self.info_observation_keys = info_keys
 
-        self.keys = []
-        for key in self.observation_keys:
-            # Add object obs if requested
-            if key == "object":
-                self.keys.append("object-state")
-            # Add image obs if requested
-            elif key == "camera":
-                for cam_name in self.env.camera_names:
-                    self.keys.append(f"{cam_name}_image")
-            # Iterate over all robots to add to state
-            elif key == "robot_proprio":
-                for idx in range(len(self.env.robots)):
-                    self.keys.append("robot{}_proprio-state".format(idx))
-            # Iterate over all robots to add to state
-            elif key == "eef_pos":
-                for idx in range(len(self.env.robots)):
-                    self.keys.append("robot{}_eef_pos".format(idx))
-            elif key == "eef_quat":
-                for idx in range(len(self.env.robots)):
-                    self.keys.append("robot{}_eef_quat".format(idx))
-            elif key == "eef_vel_lin":
-                for idx in range(len(self.env.robots)):
-                    self.keys.append("robot{}_eef_vel_lin".format(idx))
-            elif key == "eef_vel_ang":
-                for idx in range(len(self.env.robots)):
-                    self.keys.append("robot{}_eef_vel_ang".format(idx))
-            else:
-                self.keys.append(key)
+        if keys is not None:
+            self.keys = self.create_key_list_from_mapping(self.observation_keys)
+        
+        if info_keys is not None:
+            self.info_keys = self.create_key_list_from_mapping(self.info_observation_keys)
+
+        if replay_buffer_keys is not None:
+                if replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+                    her_obs = OrderedDict()
+
+                    self.replay_buffer_keys = {}
+                    self.replay_buffer_keys["replay_buffer_type"] = replay_buffer_keys["replay_buffer_type"]
+                    self.replay_buffer_keys["observation"] = self.create_key_list_from_mapping(replay_buffer_keys["observation"])
+                    self.replay_buffer_keys["achieved_goal"] = self.create_key_list_from_mapping(replay_buffer_keys["achieved_goal"])
+                    self.replay_buffer_keys["desired_goal"] = self.create_key_list_from_mapping(replay_buffer_keys["desired_goal"])
+        else:
+            self.replay_buffer_keys = {}
+            self.replay_buffer_keys["replay_buffer_type"] = ""
+            self.replay_buffer_keys["observation"] = []
+            self.replay_buffer_keys["achieved_goal"] = []
+            self.replay_buffer_keys["desired_goal"] = []
 
         # Gym specific attributes
         self.env.spec = None
@@ -101,17 +95,78 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         obs = self.env.reset()
         # obs_by_modality = OrderedDict((key, value) for key, value in obs.items() if key.endswith("-state"))
         
-        self.modality_dims = {key: obs[key].shape for key in self.keys}
+        self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in self.keys}
 
-        observation_space = OrderedDict()
-        for key in self.keys:
-            shape = self.modality_dims[key]
-            observation_space[key] = self.build_obs_space(shape=shape, low=-np.inf, high=np.inf)
-        self.observation_space = gym.spaces.Dict(observation_space)
+        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+            her_obs = self.map_her_obs(obs, self.replay_buffer_keys)
+
+            observation_space = OrderedDict()
+            for key, value in her_obs.items():
+                observation_space[key] = self.build_obs_space(shape=value.shape, low=-np.inf, high=np.inf)
+
+            self.observation_space = gym.spaces.Dict(observation_space)
+        
+        else:
+            observation_space = OrderedDict()
+            for key in self.keys:
+                shape = self.modality_dims[key]
+                observation_space[key] = self.build_obs_space(shape=shape, low=-np.inf, high=np.inf)
+
+            self.observation_space = gym.spaces.Dict(observation_space)
 
         low, high = self.env.action_spec
         self.action_space = gym.spaces.Box(low, high)
 
+    def map_her_obs(self, obs, her_keys):
+        her_obs = OrderedDict()
+        her_obs["observation"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["observation"]))
+        her_obs["achieved_goal"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["achieved_goal"]))
+        her_obs["desired_goal"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["desired_goal"]))
+        return her_obs
+
+    def create_key_list_from_mapping(self, keys):
+        temp_list = []
+        for key in keys:
+            temp_list.extend(self.key_mapping(key))
+        return temp_list
+
+    def key_mapping(self, key):
+        temp_list = []
+        # Add object obs if requested
+        if key == "object":
+            temp_list.append("object-state")
+        # Add image obs if requested
+        elif key == "camera":
+            for cam_name in self.env.camera_names:
+                temp_list.append(f"{cam_name}_image")
+        # Iterate over all robots to add to state
+        elif key == "robot_proprio":
+            for idx in range(len(self.env.robots)):
+                temp_list.append("robot{}_proprio-state".format(idx))
+        # Iterate over all robots to add to state
+        elif key == "eef_pos":
+            for idx in range(len(self.env.robots)):
+                temp_list.append("robot{}_eef_pos".format(idx))
+        elif key == "eef_quat":
+            for idx in range(len(self.env.robots)):
+                temp_list.append("robot{}_eef_quat".format(idx))
+        elif key == "eef_vel_lin":
+            for idx in range(len(self.env.robots)):
+                temp_list.append("robot{}_eef_vel_lin".format(idx))
+        elif key == "eef_vel_ang":
+            for idx in range(len(self.env.robots)):
+                temp_list.append("robot{}_eef_vel_ang".format(idx))
+        else:
+            temp_list.append(key)
+        
+        return temp_list
+
+    def concat_obs(self, obs_dict, verbose=False):
+        ob_lst = []
+        for key in obs_dict.keys():
+            ob_lst.append(np.array(obs_dict[key]).flatten())
+        return np.concatenate(ob_lst)
+    
     def filter_obs_dict_by_keys(self, obs_dict, keys):
         observations = OrderedDict()
         for key in keys:
@@ -141,7 +196,10 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
-        observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
+        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+            observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
+        else:
+            observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
         return observations, {} # observation, reset_info
 
     def step(self, action):
@@ -161,7 +219,10 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 - (dict) misc information
         """
         ob_dict, reward, terminated, info = self.env.step(action)
-        observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
+        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+            observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
+        else:
+            observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
         return observations, reward, terminated, False, info
 
     def compute_reward(self, achieved_goal, desired_goal, info):
@@ -176,8 +237,11 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         Returns:
             float: environment reward
         """
-        # Dummy args used to mimic Wrapper interface
-        return self.env.reward()
+        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+            reward = self.env.reward(achieved_goal=achieved_goal, desired_goal=desired_goal)
+        else:
+            reward = self.env.reward()
+        return reward
 
 
 # Old GymWrapperDictObs
