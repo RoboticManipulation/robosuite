@@ -173,6 +173,17 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations[key] = obs_dict[key]
         return observations
 
+    def check_for_nan(self, observations, raise_error=True):       
+        nan_detected = False
+        for key, value in observations.items():
+            if np.isnan(value).any():
+                nan_detected = True
+                print()
+                print(f"NaN detected in observation '{key}'!")
+                print(f"Observation '{key}': {value}")
+        if nan_detected and raise_error:
+            raise ValueError
+    
     def build_obs_space(self, shape, low, high):
         """
         Helper function that builds individual observation spaces.
@@ -196,6 +207,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
+        self.check_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
@@ -219,6 +231,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 - (dict) misc information
         """
         ob_dict, reward, terminated, info = self.env.step(action)
+        self.check_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
@@ -238,6 +251,14 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             float: environment reward
         """
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
+            if np.isnan(achieved_goal).any():
+                print(f"NaN detected in achieved_goal!")
+                print(f"achieved_goal: {achieved_goal}")
+            if np.isnan(desired_goal).any():
+                print(f"NaN detected in desired_goal!")
+                print(f"desired_goal: {desired_goal}")
+            if np.isnan(achieved_goal).any() or np.isnan(desired_goal).any():
+                raise ValueError
             reward = self.env.reward(achieved_goal=achieved_goal, desired_goal=desired_goal)
         else:
             reward = self.env.reward()
