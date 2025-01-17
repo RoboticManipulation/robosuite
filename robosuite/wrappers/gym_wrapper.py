@@ -173,7 +173,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations[key] = obs_dict[key]
         return observations
 
-    def check_for_nan(self, observations, raise_error=True):       
+    def check_dict_for_nan(self, observations, raise_error=True):       
         nan_detected = False
         for key, value in observations.items():
             if np.isnan(value).any():
@@ -207,7 +207,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
-        self.check_for_nan(ob_dict)
+        self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
@@ -231,7 +231,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 - (dict) misc information
         """
         ob_dict, reward, terminated, info = self.env.step(action)
-        self.check_for_nan(ob_dict)
+        self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
@@ -262,6 +262,11 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             reward = self.env.reward(achieved_goal=achieved_goal, desired_goal=desired_goal)
         else:
             reward = self.env.reward()
+        
+        if np.isnan(reward).any():
+            print(f"NaN detected in reward")
+            print(f"reward: {reward}")
+            raise ValueError
         return reward
 
 
