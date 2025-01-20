@@ -56,12 +56,15 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0]):
         # Run super method
         super().__init__(env=env)
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
         self.name = robots + "_" + type(self.env).__name__
+
+        self.norm_obs = norm_obs
+        self.norm_limits = norm_limits
 
         self.observation_keys = keys
         self.info_observation_keys = info_keys
@@ -95,24 +98,42 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         obs = self.env.reset()
         # obs_by_modality = OrderedDict((key, value) for key, value in obs.items() if key.endswith("-state"))
         
-        self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in self.keys}
+        # self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in self.keys}
+        self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in obs}
 
+        observation_space = OrderedDict()
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             her_obs = self.map_her_obs(obs, self.replay_buffer_keys)
 
-            observation_space = OrderedDict()
-            for key, value in her_obs.items():
-                observation_space[key] = self.build_obs_space(shape=value.shape, low=-np.inf, high=np.inf)
-
-            self.observation_space = gym.spaces.Dict(observation_space)
-        
+            if type(self.keys) == dict:
+                for key, value in her_obs.items():
+                    if self.norm_obs:
+                        low, high = self.norm_limits[0], self.norm_limits[1]
+                    else:
+                        lows, highs = [], []
+                        for limit_key, limit_value in self.replay_buffer_keys[key].items():
+                            lows.append(limit_value["limits"][0])
+                            highs.append(limit_value["limits"][1])
+                        low = min(lows)
+                        high = max(highs)
+                    observation_space[key] = self.build_obs_space(shape=value.shape, low=low, high=high)
+            elif type(self.keys) == list:
+                for key, value in her_obs.items():
+                    observation_space[key] = self.build_obs_space(shape=value.shape, low=-np.inf, high=np.inf)
         else:
-            observation_space = OrderedDict()
-            for key in self.keys:
-                shape = self.modality_dims[key]
-                observation_space[key] = self.build_obs_space(shape=shape, low=-np.inf, high=np.inf)
-
-            self.observation_space = gym.spaces.Dict(observation_space)
+            if type(self.keys) == dict:
+                for key, value in self.keys.items():
+                    shape = self.modality_dims[key]
+                    if self.norm_obs:
+                        low, high = self.norm_limits[0], self.norm_limits[1]
+                    else:
+                        low, high = value["limits"]
+                    observation_space[key] = self.build_obs_space(shape=shape, low=low, high=high)
+            elif type(self.keys) == list:
+                for key in self.keys:
+                    shape = self.modality_dims[key]
+                    observation_space[key] = self.build_obs_space(shape=shape, low=-np.inf, high=np.inf)
+        self.observation_space = gym.spaces.Dict(observation_space)
 
         low, high = self.env.action_spec
         self.action_space = gym.spaces.Box(low, high)
@@ -124,12 +145,30 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         her_obs["desired_goal"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["desired_goal"]))
         return her_obs
 
-    def create_key_list_from_mapping(self, keys):
-        temp_list = []
-        for key in keys:
-            temp_list.extend(self.key_mapping(key))
-        return temp_list
+    # def create_key_list_from_mapping(self, keys):
+    #     temp_list = []
+    #     for key in keys:
+    #         temp_list.extend(self.key_mapping(key))
+    #     return temp_list
 
+    def create_key_list_from_mapping(self, keys):
+        if type(keys) == dict:
+            parsed_keys = {}
+            for key, value in keys.items():
+                mapped_keys = self.key_mapping(key)
+                for mapped_key in mapped_keys:
+                    parsed_keys[mapped_key] = {}
+                    if self.norm_obs:
+                        parsed_keys[mapped_key]["limits"] = value["limits"]
+                    else:
+                        parsed_keys[mapped_key]["limits"] = [-np.inf, np.inf]
+            return parsed_keys
+        elif type(keys) == list:
+            temp_list = []
+            for key in keys:
+                temp_list.extend(self.key_mapping(key))
+            return temp_list
+    
     def key_mapping(self, key):
         temp_list = []
         # Add object obs if requested
@@ -171,6 +210,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         observations = OrderedDict()
         for key in keys:
             observations[key] = obs_dict[key]
+        if self.norm_obs:
+            observations = self.normalize_dict(observations, keys)
         return observations
 
     def check_dict_for_nan(self, observations, raise_error=True):       
@@ -193,6 +234,37 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         :param high: higher bounds of the space
         """
         return gym.spaces.Box(low=low, high=high, shape=shape, dtype=np.float32)
+
+    def normalize_value(self, value, c_min, c_max, normed_min, normed_max, key=""):
+        if np.any((value < c_min) | (value > c_max)):
+            print("Incorrect normalization input in:", key)
+        v_normed = (value - c_min) / (c_max - c_min)
+        v_normed = v_normed * (normed_max - normed_min) + normed_min
+        if np.any((v_normed < normed_min) | (v_normed > normed_max)):
+            print("Incorrect normalization output in:", key)
+        return v_normed
+
+    def denormalize_value(self, v_normed, c_min, c_max, normed_min, normed_max, key=""):
+        value = (v_normed - normed_min)/(normed_max - normed_min)
+        value = value * (c_max - c_min) + c_min
+        return value
+    
+    def normalize_dict(self, input_dict, keys):
+        output_dict = OrderedDict()
+        for key, value in input_dict.items():
+            # print(f"Key={key}\nValue={value}")
+            low, high = keys[key]["limits"]
+            normed_value = self.normalize_value(value, low, high, self.norm_limits[0], self.norm_limits[1], key)
+            output_dict[key] = normed_value
+        return output_dict
+    
+    def denormalize_dict(self, input_dict, keys):
+        output_dict = OrderedDict()
+        for key, value in input_dict.items():
+            # print(f"Key={key}\nValue={value}")
+            low, high = keys[key]["limits"]
+            output_dict[key] = self.denormalize_value(value, low, high, self.norm_limits[0], self.norm_limits[1], key)
+        return output_dict
 
     def reset(self, seed=None, options=None):
         """
@@ -238,6 +310,22 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
         return observations, reward, terminated, False, info
 
+    def map_her_goal(self, goal, goal_name):
+        goal_dict = OrderedDict()
+        shapes = {}
+        index = 0
+        for key in self.replay_buffer_keys[goal_name]:
+            shape = self.modality_dims[key][0]
+            start = index
+            end = index+shape
+            shapes[key] = [start, end]
+            index += shape
+        for key in self.replay_buffer_keys[goal_name]:
+            start = shapes[key][0]
+            end = shapes[key][1]
+            goal_dict[key] = goal[:, start:end]
+        return goal_dict
+    
     def compute_reward(self, achieved_goal, desired_goal, info):
         """
         Dummy function to be compatible with gym interface that simply returns environment reward
@@ -250,16 +338,21 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         Returns:
             float: environment reward
         """
-        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
-            if np.isnan(achieved_goal).any():
-                print(f"NaN detected in achieved_goal!")
-                print(f"achieved_goal: {achieved_goal}")
-            if np.isnan(desired_goal).any():
-                print(f"NaN detected in desired_goal!")
-                print(f"desired_goal: {desired_goal}")
-            if np.isnan(achieved_goal).any() or np.isnan(desired_goal).any():
-                raise ValueError
-            reward = self.env.reward(achieved_goal=achieved_goal, desired_goal=desired_goal)
+        if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":           
+            # Convert goals to dicts           
+            achieved_goal_dict = self.map_her_goal(achieved_goal, "achieved_goal")
+            desired_goal_dict = self.map_her_goal(desired_goal, "desired_goal")
+
+            # Check for NaN values
+            self.check_dict_for_nan(achieved_goal_dict)
+            self.check_dict_for_nan(desired_goal_dict)
+
+            # Denormalize values if they were normalized
+            if self.norm_obs:
+                achieved_goal_dict = self.denormalize_dict(achieved_goal_dict, self.replay_buffer_keys["achieved_goal"])
+                desired_goal_dict = self.denormalize_dict(desired_goal_dict, self.replay_buffer_keys["desired_goal"])
+            
+            reward = self.env.reward(achieved_goal=achieved_goal_dict, desired_goal=desired_goal_dict)
         else:
             reward = self.env.reward()
         
