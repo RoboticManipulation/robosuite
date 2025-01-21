@@ -238,10 +238,21 @@ class GymWrapperDictObs(Wrapper, gym.Env):
     def normalize_value(self, value, c_min, c_max, normed_min, normed_max, key=""):
         if np.any((value < c_min) | (value > c_max)):
             print("Incorrect normalization input in:", key)
+            if np.any((value < c_min)):
+                print(f"value_min:{value.min()} < {c_min}")
+            if np.any((value > c_max)):
+                print(f"value_max:{value.max()} > {c_max}")
+            
         v_normed = (value - c_min) / (c_max - c_min)
         v_normed = v_normed * (normed_max - normed_min) + normed_min
+
         if np.any((v_normed < normed_min) | (v_normed > normed_max)):
             print("Incorrect normalization output in:", key)
+            if np.any((v_normed < normed_min)):
+                print(f"normed_min:{v_normed.min()} < {normed_min}")
+            if np.any((v_normed > normed_max)):
+                print(f"normed_max:{v_normed.max()} > {normed_max}")
+        
         return v_normed
 
     def denormalize_value(self, v_normed, c_min, c_max, normed_min, normed_max, key=""):
