@@ -235,14 +235,15 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         """
         return gym.spaces.Box(low=low, high=high, shape=shape, dtype=np.float32)
 
-    def normalize_value(self, value, c_min, c_max, normed_min, normed_max, key=""):
+    def normalize_value(self, value, c_min, c_max, normed_min, normed_max, key="", raise_error=True):
         if np.any((value < c_min) | (value > c_max)):
             print("Incorrect normalization input in:", key)
             if np.any((value < c_min)):
                 print(f"value_min:{value.min()} < {c_min}")
             if np.any((value > c_max)):
                 print(f"value_max:{value.max()} > {c_max}")
-            
+            if raise_error:
+                raise ValueError  
         v_normed = (value - c_min) / (c_max - c_min)
         v_normed = v_normed * (normed_max - normed_min) + normed_min
 
@@ -252,7 +253,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 print(f"normed_min:{v_normed.min()} < {normed_min}")
             if np.any((v_normed > normed_max)):
                 print(f"normed_max:{v_normed.max()} > {normed_max}")
-        
+            if raise_error:
+                raise ValueError
         return v_normed
 
     def denormalize_value(self, v_normed, c_min, c_max, normed_min, normed_max, key=""):
