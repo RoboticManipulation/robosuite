@@ -6,10 +6,11 @@ import numpy as np
 
 
 class OpenCVRenderer:
-    def __init__(self, sim):
+    # def __init__(self, sim, width=1280, height=800):
+    def __init__(self, sim, width=848, height=480):
         # TODO: update this appropriately - need to get screen dimensions
-        self.width = 1280
-        self.height = 800
+        self.width = width
+        self.height = height
 
         self.sim = sim
         self.camera_name = self.sim.model.camera_id2name(0)
