@@ -56,9 +56,14 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0]):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False):
         # Run super method
         super().__init__(env=env)
+
+        self.imitate_cams = imitate_cams
+        # self.cam_obs_names = ["left_depth", "right_depth"]
+        self.cam_obs_names = ["left_depth"]
+
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
         self.name = robots + "_" + type(self.env).__name__
@@ -295,7 +300,23 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
             observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
-        return observations, {} # observation, reset_info
+
+        if self.imitate_cams:
+            info = dict(
+                (key, cam_ob) 
+                for key, cam_ob in ob_dict.items() 
+                if any(sub in key for sub in ("depth",))
+            )
+            # info = dict(
+            #     (key, cam_ob) 
+            #     for key, cam_ob in ob_dict.items() 
+            #     if any(sub in key for sub in ("image", "depth", "segmentation"))
+            # )
+            # info = dict((key, cam_ob.flatten().tolist()) for key, cam_ob in ob_dict.items() if any(sub in key for sub in ("image", "depth", "segmentation")))
+            # info = {}
+        else:
+            info = dict()
+        return observations, info # observation, reset_info
 
     def step(self, action):
         """
@@ -319,6 +340,27 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
         else:
             observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
+
+        if self.imitate_cams:
+            info.update({
+                key: cam_ob
+                for key, cam_ob in ob_dict.items()
+                if any(sub in key for sub in ("depth",))
+            })
+            # info.update({
+            #     key: cam_ob
+            #     for key, cam_ob in ob_dict.items()
+            #     if any(sub in key for sub in ("image", "depth", "segmentation"))
+            # })
+            # info.update({key: cam_ob.flatten().tolist() for key, cam_ob in ob_dict.items() if any(sub in key for sub in ("image", "depth", "segmentation"))})
+            if terminated:
+                # print("here")
+                observations.update({
+                    key: cam_ob
+                    for key, cam_ob in ob_dict.items()
+                    if any(sub in key for sub in self.cam_obs_names)
+                })
+        
         return observations, reward, terminated, False, info
 
     def map_her_goal(self, goal, goal_name):
