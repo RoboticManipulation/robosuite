@@ -36,6 +36,7 @@ def test_camera_transforms():
         camera_widths=[camera_width],
         reward_shaping=True,
         control_freq=20,
+        mujoco_passive_viewer=True
     )
     obs_dict = env.reset()
     sim = env.sim
