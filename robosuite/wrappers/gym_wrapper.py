@@ -61,8 +61,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         super().__init__(env=env)
 
         self.imitate_cams = imitate_cams
-        self.cam_obs_names = ["left_depth", "right_depth"]
-        # self.cam_obs_names = ["left_depth"]
+        self.additional_obs = ["left_depth", "right_depth"]
+        # self.additional_obs = ["left_depth"]
 
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
@@ -305,7 +305,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             info = dict(
                 (key, cam_ob) 
                 for key, cam_ob in ob_dict.items() 
-                if any(sub in key for sub in ("depth",))
+                if any(sub in key for sub in self.additional_obs)
             )
             # info = dict(
             #     (key, cam_ob) 
@@ -342,10 +342,11 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
 
         if self.imitate_cams:
+            # Add goal heightmap camera observations via info dict
             info.update({
                 key: cam_ob
                 for key, cam_ob in ob_dict.items()
-                if any(sub in key for sub in ("depth",))
+                if any(sub in key for sub in self.additional_obs)
             })
             # info.update({
             #     key: cam_ob
@@ -353,12 +354,13 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             #     if any(sub in key for sub in ("image", "depth", "segmentation"))
             # })
             # info.update({key: cam_ob.flatten().tolist() for key, cam_ob in ob_dict.items() if any(sub in key for sub in ("image", "depth", "segmentation"))})
+
             if terminated:
                 # print("here")
                 observations.update({
                     key: cam_ob
                     for key, cam_ob in ob_dict.items()
-                    if any(sub in key for sub in self.cam_obs_names)
+                    if any(sub in key for sub in self.additional_obs)
                 })
         
         return observations, reward, terminated, False, info
