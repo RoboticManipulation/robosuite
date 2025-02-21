@@ -343,8 +343,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         if self.imitate_cams:
             # Add goal heightmap camera observations via info dict
             info.update({
-                key: cam_ob
-                for key, cam_ob in ob_dict.items()
+                key: add_ob
+                for key, add_ob in ob_dict.items()
                 if any(sub in key for sub in self.additional_obs)
             })
             # info.update({
