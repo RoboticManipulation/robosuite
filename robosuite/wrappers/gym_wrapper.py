@@ -56,13 +56,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=[]):
         # Run super method
         super().__init__(env=env)
 
         self.imitate_cams = imitate_cams
-        self.additional_obs = ["left_depth", "right_depth"]
-        # self.additional_obs = ["left_depth"]
+        self.additional_obs = additional_obs
 
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
@@ -303,8 +302,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if self.imitate_cams:
             info = dict(
-                (key, cam_ob) 
-                for key, cam_ob in ob_dict.items() 
+                (key, add_ob) 
+                for key, add_ob in ob_dict.items() 
                 if any(sub in key for sub in self.additional_obs)
             )
             # info = dict(
@@ -358,8 +357,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             if terminated:
                 # print("here")
                 observations.update({
-                    key: cam_ob
-                    for key, cam_ob in ob_dict.items()
+                    key: add_ob
+                    for key, add_ob in ob_dict.items()
                     if any(sub in key for sub in self.additional_obs)
                 })
         
