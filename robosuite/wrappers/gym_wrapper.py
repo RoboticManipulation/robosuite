@@ -61,8 +61,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         super().__init__(env=env)
 
         self.imitate_cams = imitate_cams
-        # self.cam_obs_names = ["left_depth", "right_depth"]
-        self.cam_obs_names = ["left_depth"]
+        self.cam_obs_names = ["left_depth", "right_depth"]
+        # self.cam_obs_names = ["left_depth"]
 
         # Create name for gym
         robots = "".join([type(robot.robot_model).__name__ for robot in self.env.robots])
