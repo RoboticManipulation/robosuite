@@ -58,7 +58,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs={}):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict()):
         # Run super method
         super().__init__(env=env)
 
@@ -308,7 +308,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             observations = self.filter_obs_dict_by_keys(ob_dict, self.keys)
 
         if self.imitate_cams:
-            info = dict(
+            info = OrderedDict(
                 (key, add_ob) 
                 for key, add_ob in ob_dict.items() 
                 if any(sub in key for sub in self.additional_obs.keys())
@@ -316,7 +316,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             if self.norm_obs:
                 info = self.normalize_dict(info, self.additional_obs)
         else:
-            info = dict()
+            info = OrderedDict()
         
         return observations, info
 
@@ -352,7 +352,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if self.imitate_cams:
             # Add goal heightmap camera observations via info dict
-            temp_info = dict(
+            temp_info = OrderedDict(
                 (key, add_ob) 
                 for key, add_ob in ob_dict.items() 
                 if any(sub in key for sub in self.additional_obs.keys())
