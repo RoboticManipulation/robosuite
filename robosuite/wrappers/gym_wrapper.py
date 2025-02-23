@@ -11,6 +11,8 @@ from robosuite.wrappers import Wrapper
 
 from collections import OrderedDict
 
+import sand_gym.utils.camera as cam_utils
+
 class IndexEnvWrapper(Wrapper, gym.Env):
 
     def __init__(self, env, index, keys=None):
@@ -56,7 +58,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=[]):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs={}):
         # Run super method
         super().__init__(env=env)
 
@@ -100,9 +102,13 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         # set up observation and action spaces
         obs = self.env.reset()
-        # obs_by_modality = OrderedDict((key, value) for key, value in obs.items() if key.endswith("-state"))
+
+        if (any("depth_seg" in sub for sub in self.info_observation_keys)
+            or any("depth_seg" in sub for sub in self.observation_keys.keys())
+            or any("depth_seg" in sub for sub in self.additional_obs.keys())):
+            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim)
+            obs.update(depth_seg_observations)
         
-        # self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in self.keys}
         self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in obs}
 
         observation_space = OrderedDict()
@@ -148,12 +154,6 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         her_obs["achieved_goal"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["achieved_goal"]))
         her_obs["desired_goal"] = self.concat_obs(self.filter_obs_dict_by_keys(obs, her_keys["desired_goal"]))
         return her_obs
-
-    # def create_key_list_from_mapping(self, keys):
-    #     temp_list = []
-    #     for key in keys:
-    #         temp_list.extend(self.key_mapping(key))
-    #     return temp_list
 
     def create_key_list_from_mapping(self, keys):
         if type(keys) == dict:
@@ -294,6 +294,13 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             else:
                 raise TypeError("Seed must be an integer type!")
         ob_dict = self.env.reset()
+
+        if (any("depth_seg" in sub for sub in self.info_observation_keys)
+            or any("depth_seg" in sub for sub in self.observation_keys.keys())
+            or any("depth_seg" in sub for sub in self.additional_obs.keys())):
+            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            ob_dict.update(depth_seg_observations)
+
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
@@ -304,18 +311,14 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             info = dict(
                 (key, add_ob) 
                 for key, add_ob in ob_dict.items() 
-                if any(sub in key for sub in self.additional_obs)
+                if any(sub in key for sub in self.additional_obs.keys())
             )
-            # info = dict(
-            #     (key, cam_ob) 
-            #     for key, cam_ob in ob_dict.items() 
-            #     if any(sub in key for sub in ("image", "depth", "segmentation"))
-            # )
-            # info = dict((key, cam_ob.flatten().tolist()) for key, cam_ob in ob_dict.items() if any(sub in key for sub in ("image", "depth", "segmentation")))
-            # info = {}
+            if self.norm_obs:
+                info = self.normalize_dict(info, self.additional_obs)
         else:
             info = dict()
-        return observations, info # observation, reset_info
+        
+        return observations, info
 
     def step(self, action):
         """
@@ -334,6 +337,13 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 - (dict) misc information
         """
         ob_dict, reward, terminated, info = self.env.step(action)
+
+        if (any("depth_seg" in sub for sub in self.info_observation_keys)
+            or any("depth_seg" in sub for sub in self.observation_keys.keys())
+            or any("depth_seg" in sub for sub in self.additional_obs.keys())):
+            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            ob_dict.update(depth_seg_observations)
+
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
@@ -342,25 +352,27 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if self.imitate_cams:
             # Add goal heightmap camera observations via info dict
-            info.update({
-                key: add_ob
-                for key, add_ob in ob_dict.items()
-                if any(sub in key for sub in self.additional_obs)
-            })
-            # info.update({
-            #     key: cam_ob
-            #     for key, cam_ob in ob_dict.items()
-            #     if any(sub in key for sub in ("image", "depth", "segmentation"))
-            # })
-            # info.update({key: cam_ob.flatten().tolist() for key, cam_ob in ob_dict.items() if any(sub in key for sub in ("image", "depth", "segmentation"))})
+            temp_info = dict(
+                (key, add_ob) 
+                for key, add_ob in ob_dict.items() 
+                if any(sub in key for sub in self.additional_obs.keys())
+            )
+
+            if self.norm_obs:
+                temp_info = self.normalize_dict(temp_info, self.additional_obs)
+            
+            info.update(temp_info)
 
             if terminated:
-                # print("here")
-                observations.update({
+                additional_termination_obs = OrderedDict()
+                additional_termination_obs.update({
                     key: add_ob
                     for key, add_ob in ob_dict.items()
-                    if any(sub in key for sub in self.additional_obs)
+                    if any(sub in key for sub in self.additional_obs.keys())
                 })
+                if self.norm_obs:
+                    additional_termination_obs = self.normalize_dict(additional_termination_obs, self.additional_obs)
+                observations.update(additional_termination_obs)
         
         return observations, reward, terminated, False, info
 
