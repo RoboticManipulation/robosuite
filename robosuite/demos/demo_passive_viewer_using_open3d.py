@@ -18,8 +18,8 @@ env = suite.make(
     camera_widths=256,  # 512
     # camera_names=['frontview', 'birdview', 'agentview', 'sideview', 'robot0_robotview', 'robot0_eye_in_hand'],
     # camera_depths=['frontview', 'birdview', 'agentview', 'sideview', 'robot0_robotview', 'robot0_eye_in_hand'],
-    camera_names=['agentview', 'robot0_eye_in_hand'],
-    camera_depths=['agentview', 'robot0_eye_in_hand'],
+    camera_names=['agentview'],
+    camera_depths=['agentview'],
     camera_segmentations='element',
     hard_reset=False,
     mujoco_passive_viewer=False
@@ -79,31 +79,11 @@ for i in range(1):  # Capture 1 frames
             cv2.imwrite(save_path, depth_img_scaled)
             print(f"Saved: {save_path}")
             
-            """
-            # Clip and normalize the depth values in the range [0.0, 0.6] (30 cm ~ 60 cm)
-            clip_min = 0.98
-            clip_max = 1.0
-            #depth_img = np.where((depth_img >= clip_min) & (depth_img <= clip_max), depth_img, np.nan)  # NaN when out of range
-            #depth_img = np.clip(depth_img, clip_min, clip_max)
-            depth_img_scaled = (depth_img - clip_min) / (clip_max - clip_min)  # Normalize to [clip_min, clip_max]
-            depth_img_scaled_encoded = (depth_img_scaled * 65535.0).astype(np.uint16)
-            save_path = os.path.join(save_dir, f"{cam_name}_frame_{i}_depth_scaled.png")
-            cv2.imwrite(save_path, depth_img_scaled_encoded)
-            print(f"Saved: {save_path}")
-            """
-            # # Clip and the depth values in the range [clip_min, clip_max] (in meters)
-            # clip_min = 0.3
-            # clip_max = 1.0
-            # depth_bg = 1.0
-            # depth_img = np.where((depth_img >= clip_min) & (depth_img <= clip_max), depth_img, depth_bg)
-            # depth_img_normalized = (depth_img - clip_min) / (clip_max - clip_min)
-            # depth_img_uint8 = (depth_img_normalized * 255).astype(np.uint8)
             # Normalize the depth values to [0, 255] for visualization
             depth_img_normalized = cv2.normalize(depth_img, None, 0, 255, cv2.NORM_MINMAX)
             # Convert to uint8 for proper image encoding
             depth_img_uint8 = depth_img_normalized.astype(np.uint8)
             save_path = os.path.join(save_dir, f"{cam_name}_frame_{i}_depth_vis.png")
-            # cv2.imwrite(save_path, depth_img_encoded, [cv2.IMWRITE_PNG_COMPRESSION, 0])  # value 0 for no compression
             cv2.imwrite(save_path, depth_img_uint8)
             print(f"Saved: {save_path}")
         
@@ -158,7 +138,7 @@ for i in range(1):  # Capture 1 frames
 
             save_path = os.path.join(save_dir, f"{cam_name}_frame_{i}_pointcloud.ply")
             o3d.io.write_point_cloud(save_path, pcd)
-            print(f"Saved Point Cloud: {save_path}")
+            print(f"Saved: {save_path}")
         
         # Generate and save point cloud of the block segments
         if (rgb_cam_name in obs.keys()) and (depth_cam_name in obs.keys()) and (seg_cam_name in obs.keys()):
@@ -183,9 +163,8 @@ for i in range(1):  # Capture 1 frames
             # Flip it, otherwise the pointcloud will be upside down
             pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
 
-            # save_path = os.path.join(save_dir, f"{cam_name}_frame_{i}_pointcloud.ply")
             save_path = os.path.join(save_dir, f"{cam_name}_frame_{i}_pcd_block_seg.ply")
             o3d.io.write_point_cloud(save_path, pcd)
-            print(f"Saved Point Cloud: {save_path}")
+            print(f"Saved: {save_path}")
         
 env.close()
