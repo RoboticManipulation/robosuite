@@ -12,6 +12,8 @@ from robosuite.wrappers import Wrapper
 from collections import OrderedDict
 
 import sand_gym.utils.camera as cam_utils
+import sand_gym.utils.pointcloud as pointcloud
+# import sand_gym.utils.common as common
 
 class IndexEnvWrapper(Wrapper, gym.Env):
 
@@ -108,7 +110,20 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
             depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim)
             obs.update(depth_seg_observations)
-        
+
+        if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env)
+            obs.update(reconstructed_heightmap_observations)
+    
+        if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=obs)
+            # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
+            obs.update(reconstructed_heightmap_diff)
+
         self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in obs}
 
         observation_space = OrderedDict()
@@ -301,6 +316,19 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
             ob_dict.update(depth_seg_observations)
 
+        if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
+            ob_dict.update(reconstructed_heightmap_observations)
+
+        if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
+            # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
+            ob_dict.update(reconstructed_heightmap_diff)
+
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
             observations = self.map_her_obs(ob_dict, self.replay_buffer_keys)
@@ -343,6 +371,19 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
             depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
             ob_dict.update(depth_seg_observations)
+
+        if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
+            ob_dict.update(reconstructed_heightmap_observations)
+
+        if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
+            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
+            # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
+            ob_dict.update(reconstructed_heightmap_diff)
 
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
