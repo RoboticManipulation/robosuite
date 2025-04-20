@@ -13,7 +13,7 @@ from collections import OrderedDict
 
 import sand_gym.utils.camera as cam_utils
 import sand_gym.utils.pointcloud as pointcloud
-# import sand_gym.utils.common as common
+from sand_gym.utils.common import normalize_dict, denormalize_dict
 
 class IndexEnvWrapper(Wrapper, gym.Env):
 
@@ -230,7 +230,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         for key in keys:
             observations[key] = obs_dict[key]
         if self.norm_obs:
-            observations = self.normalize_dict(observations, keys)
+            observations = normalize_dict(observations, keys, self.norm_limits)
         return observations
 
     def check_dict_for_nan(self, observations, raise_error=True):       
@@ -253,48 +253,6 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         :param high: higher bounds of the space
         """
         return gym.spaces.Box(low=low, high=high, shape=shape, dtype=np.float32)
-
-    def normalize_value(self, value, c_min, c_max, normed_min, normed_max, key=""):
-        if np.any((value < c_min) | (value > c_max)):
-            print("Incorrect normalization input in:", key)
-            if np.any((value < c_min)):
-                print(f"value_min:{value.min()} < {c_min}")
-            if np.any((value > c_max)):
-                print(f"value_max:{value.max()} > {c_max}")
-            
-        v_normed = (value - c_min) / (c_max - c_min)
-        v_normed = v_normed * (normed_max - normed_min) + normed_min
-
-        if np.any((v_normed < normed_min) | (v_normed > normed_max)):
-            print("Incorrect normalization output in:", key)
-            if np.any((v_normed < normed_min)):
-                print(f"normed_min:{v_normed.min()} < {normed_min}")
-            if np.any((v_normed > normed_max)):
-                print(f"normed_max:{v_normed.max()} > {normed_max}")
-        
-        return v_normed
-
-    def denormalize_value(self, v_normed, c_min, c_max, normed_min, normed_max, key=""):
-        value = (v_normed - normed_min)/(normed_max - normed_min)
-        value = value * (c_max - c_min) + c_min
-        return value
-    
-    def normalize_dict(self, input_dict, keys):
-        output_dict = OrderedDict()
-        for key, value in input_dict.items():
-            # print(f"Key={key}\nValue={value}")
-            low, high = keys[key]["limits"]
-            normed_value = self.normalize_value(value, low, high, self.norm_limits[0], self.norm_limits[1], key)
-            output_dict[key] = normed_value
-        return output_dict
-    
-    def denormalize_dict(self, input_dict, keys):
-        output_dict = OrderedDict()
-        for key, value in input_dict.items():
-            # print(f"Key={key}\nValue={value}")
-            low, high = keys[key]["limits"]
-            output_dict[key] = self.denormalize_value(value, low, high, self.norm_limits[0], self.norm_limits[1], key)
-        return output_dict
 
     def reset(self, seed=None, options=None):
         """
@@ -342,7 +300,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 if any(sub in key for sub in self.additional_obs.keys())
             )
             if self.norm_obs:
-                info = self.normalize_dict(info, self.additional_obs)
+                info = normalize_dict(info, self.additional_obs, self.norm_limits)
         else:
             info = OrderedDict()
         
@@ -400,7 +358,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             )
 
             if self.norm_obs:
-                temp_info = self.normalize_dict(temp_info, self.additional_obs)
+                temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits)
             
             info.update(temp_info)
 
@@ -412,7 +370,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                     if any(sub in key for sub in self.additional_obs.keys())
                 })
                 if self.norm_obs:
-                    additional_termination_obs = self.normalize_dict(additional_termination_obs, self.additional_obs)
+                    additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits)
                 observations.update(additional_termination_obs)
         
         return observations, reward, terminated, False, info
@@ -456,8 +414,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
             # Denormalize values if they were normalized
             if self.norm_obs:
-                achieved_goal_dict = self.denormalize_dict(achieved_goal_dict, self.replay_buffer_keys["achieved_goal"])
-                desired_goal_dict = self.denormalize_dict(desired_goal_dict, self.replay_buffer_keys["desired_goal"])
+                achieved_goal_dict = denormalize_dict(achieved_goal_dict, self.replay_buffer_keys["achieved_goal"], self.norm_limits)
+                desired_goal_dict = denormalize_dict(desired_goal_dict, self.replay_buffer_keys["desired_goal"], self.norm_limits)
             
             reward = self.env.reward(achieved_goal=achieved_goal_dict, desired_goal=desired_goal_dict)
         else:
