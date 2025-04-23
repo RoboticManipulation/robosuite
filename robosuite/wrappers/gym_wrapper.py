@@ -60,9 +60,11 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict()):
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), verbose=0):
         # Run super method
         super().__init__(env=env)
+
+        self.verbose = verbose
 
         self.imitate_cams = imitate_cams
         self.additional_obs = additional_obs
@@ -230,7 +232,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         for key in keys:
             observations[key] = obs_dict[key]
         if self.norm_obs:
-            observations = normalize_dict(observations, keys, self.norm_limits)
+            observations = normalize_dict(observations, keys, self.norm_limits, check_norm=(self.verbose>=1))
         return observations
 
     def check_dict_for_nan(self, observations, raise_error=True):       
@@ -300,7 +302,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 if any(sub in key for sub in self.additional_obs.keys())
             )
             if self.norm_obs:
-                info = normalize_dict(info, self.additional_obs, self.norm_limits)
+                info = normalize_dict(info, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
         else:
             info = OrderedDict()
         
@@ -358,7 +360,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             )
 
             if self.norm_obs:
-                temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits)
+                temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
             
             info.update(temp_info)
 
@@ -370,7 +372,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                     if any(sub in key for sub in self.additional_obs.keys())
                 })
                 if self.norm_obs:
-                    additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits)
+                    additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
                 observations.update(additional_termination_obs)
         
         return observations, reward, terminated, False, info
