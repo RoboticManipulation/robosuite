@@ -60,14 +60,14 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), verbose=0):
-    # def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), camera_config=None, verbose=0):
+    
+    def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), camera_config=None, verbose=0):
         # Run super method
         super().__init__(env=env)
 
         self.verbose = verbose
 
-        # self.camera_config = camera_config
+        self.camera_config = camera_config
 
         self.imitate_cams = imitate_cams
         self.additional_obs = additional_obs
@@ -122,8 +122,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env)
-            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env, camera_config=self.camera_config)
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env, camera_config=self.camera_config)
             obs.update(reconstructed_heightmap_observations)
     
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
@@ -295,8 +294,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
-            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
@@ -361,8 +359,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
-            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
+            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
