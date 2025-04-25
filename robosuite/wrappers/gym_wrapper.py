@@ -61,10 +61,13 @@ class GymWrapperDictObs(Wrapper, gym.Env):
     """
 
     def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), verbose=0):
+    # def __init__(self, env, keys=None, info_keys=None, replay_buffer_keys=None, norm_obs=False, norm_limits=[-1.0, 1.0], imitate_cams=False, additional_obs=OrderedDict(), camera_config=None, verbose=0):
         # Run super method
         super().__init__(env=env)
 
         self.verbose = verbose
+
+        # self.camera_config = camera_config
 
         self.imitate_cams = imitate_cams
         self.additional_obs = additional_obs
@@ -115,8 +118,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
-            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env)
+            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env, camera_config=self.camera_config)
             obs.update(reconstructed_heightmap_observations)
     
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
@@ -126,6 +133,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             obs.update(reconstructed_heightmap_diff)
 
+        if (any("eef_pos_prev" in sub for sub in self.info_observation_keys)
+            or any("eef_pos_prev" in sub for sub in self.observation_keys.keys())
+            or any("eef_pos_prev" in sub for sub in self.additional_obs.keys())):
+            self.eef_pos_previous = np.copy(obs["robot0_eef_pos"])
+            obs["eef_pos_prev"] = self.eef_pos_previous
+        
         self.modality_dims = {obs_key: obs[obs_key].shape for obs_key in obs}
 
         observation_space = OrderedDict()
@@ -278,8 +291,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
-            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
+            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
@@ -288,6 +305,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
+
+        if (any("eef_pos_prev" in sub for sub in self.info_observation_keys)
+            or any("eef_pos_prev" in sub for sub in self.observation_keys.keys())
+            or any("eef_pos_prev" in sub for sub in self.additional_obs.keys())):
+            self.eef_pos_previous = np.copy(ob_dict["robot0_eef_pos"])
+            ob_dict["eef_pos_prev"] = self.eef_pos_previous
 
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
@@ -334,8 +357,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_current" in sub for sub in self.observation_keys.keys())
-            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())):
+            or any("reconstructed_heightmap_current" in sub for sub in self.additional_obs.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
+            or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
+            or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env)
+            # reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
@@ -344,6 +371,12 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
+
+        if (any("eef_pos_prev" in sub for sub in self.info_observation_keys)
+            or any("eef_pos_prev" in sub for sub in self.observation_keys.keys())
+            or any("eef_pos_prev" in sub for sub in self.additional_obs.keys())):
+            ob_dict["eef_pos_prev"] = self.eef_pos_previous
+            self.eef_pos_previous = np.copy(ob_dict["robot0_eef_pos"])
 
         self.check_dict_for_nan(ob_dict)
         if self.replay_buffer_keys["replay_buffer_type"] == "HerReplayBuffer":
