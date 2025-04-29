@@ -66,6 +66,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         super().__init__(env=env)
 
         self.verbose = verbose
+        self.check_norm = (self.verbose>=1)
 
         self.camera_config = camera_config
 
@@ -244,7 +245,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         for key in keys:
             observations[key] = obs_dict[key]
         if self.norm_obs:
-            observations = normalize_dict(observations, keys, self.norm_limits, check_norm=(self.verbose>=1))
+            observations = normalize_dict(observations, keys, self.norm_limits, check_norm=self.check_norm)
         return observations
 
     def check_dict_for_nan(self, observations, raise_error=True):       
@@ -323,7 +324,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 if any(sub in key for sub in self.additional_obs.keys())
             )
             if self.norm_obs:
-                info = normalize_dict(info, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
+                info = normalize_dict(info, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
         else:
             info = OrderedDict()
         
@@ -390,7 +391,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             )
 
             if self.norm_obs:
-                temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
+                temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
             
             info.update(temp_info)
 
@@ -402,7 +403,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                     if any(sub in key for sub in self.additional_obs.keys())
                 })
                 if self.norm_obs:
-                    additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits, check_norm=(self.verbose>=1))
+                    additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
                 observations.update(additional_termination_obs)
         
         return observations, reward, terminated, False, info
