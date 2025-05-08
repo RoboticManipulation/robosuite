@@ -11,9 +11,11 @@ from robosuite.wrappers import Wrapper
 
 from collections import OrderedDict
 
-import sand_gym.utils.camera as cam_utils
-import sand_gym.utils.pointcloud as pointcloud
-from sand_gym.utils.common import normalize_dict, denormalize_dict
+# from sand_gym.utils.camera import add_depth_seg_to_obs
+# from sand_gym.utils.pointcloud import add_reconstructed_heightmap_to_obs
+# from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
+# from sand_gym.utils.common import normalize_dict
+# from sand_gym.utils.common import denormalize_dict
 
 class IndexEnvWrapper(Wrapper, gym.Env):
 
@@ -114,7 +116,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         if (any("depth_seg" in sub for sub in self.info_observation_keys)
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
-            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim)
+            from sand_gym.utils.camera import add_depth_seg_to_obs
+            depth_seg_observations = add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim)
             obs.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
@@ -123,13 +126,15 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=obs, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_to_obs
+            reconstructed_heightmap_observations = add_reconstructed_heightmap_to_obs(obs=obs, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
             obs.update(reconstructed_heightmap_observations)
     
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=obs)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=obs)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             obs.update(reconstructed_heightmap_diff)
 
@@ -241,6 +246,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         return np.concatenate(ob_lst)
     
     def filter_obs_dict_by_keys(self, obs_dict, keys):
+        from sand_gym.utils.common import normalize_dict
         observations = OrderedDict()
         for key in keys:
             observations[key] = obs_dict[key]
@@ -286,7 +292,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         if (any("depth_seg" in sub for sub in self.info_observation_keys)
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
-            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            from sand_gym.utils.camera import add_depth_seg_to_obs
+            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
             ob_dict.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
@@ -295,13 +302,15 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_to_obs
+            reconstructed_heightmap_observations = add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
 
@@ -324,6 +333,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                 if any(sub in key for sub in self.additional_obs.keys())
             )
             if self.norm_obs:
+                from sand_gym.utils.common import normalize_dict
                 info = normalize_dict(info, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
         else:
             info = OrderedDict()
@@ -351,7 +361,8 @@ class GymWrapperDictObs(Wrapper, gym.Env):
         if (any("depth_seg" in sub for sub in self.info_observation_keys)
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
-            depth_seg_observations = cam_utils.add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            from sand_gym.utils.camera import add_depth_seg_to_obs
+            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
             ob_dict.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
@@ -360,13 +371,15 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_observations = pointcloud.add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_to_obs
+            reconstructed_heightmap_observations = add_reconstructed_heightmap_to_obs(obs=ob_dict, env=self.env, camera_config=self.camera_config, verbose=self.verbose)
             ob_dict.update(reconstructed_heightmap_observations)
 
         if (any("reconstructed_heightmap_diff" in sub for sub in self.info_observation_keys)
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
-            reconstructed_heightmap_diff = pointcloud.add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
+            from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
 
@@ -391,6 +404,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             )
 
             if self.norm_obs:
+                from sand_gym.utils.common import normalize_dict
                 temp_info = normalize_dict(temp_info, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
             
             info.update(temp_info)
@@ -403,6 +417,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
                     if any(sub in key for sub in self.additional_obs.keys())
                 })
                 if self.norm_obs:
+                    from sand_gym.utils.common import normalize_dict
                     additional_termination_obs = normalize_dict(additional_termination_obs, self.additional_obs, self.norm_limits, check_norm=self.check_norm)
                 observations.update(additional_termination_obs)
         
@@ -447,6 +462,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
 
             # Denormalize values if they were normalized
             if self.norm_obs:
+                from sand_gym.utils.common import denormalize_dict
                 achieved_goal_dict = denormalize_dict(achieved_goal_dict, self.replay_buffer_keys["achieved_goal"], self.norm_limits)
                 desired_goal_dict = denormalize_dict(desired_goal_dict, self.replay_buffer_keys["desired_goal"], self.norm_limits)
             
