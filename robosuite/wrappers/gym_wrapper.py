@@ -134,7 +134,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
-            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=obs, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False))
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=obs, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False), verbose=self.verbose)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             obs.update(reconstructed_heightmap_diff)
 
@@ -310,7 +310,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
-            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False))
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False), verbose=self.verbose)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
 
@@ -379,7 +379,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("reconstructed_heightmap_diff" in sub for sub in self.observation_keys.keys())
             or any("reconstructed_heightmap_diff" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.pointcloud import add_reconstructed_heightmap_diff_to_obs
-            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False))
+            reconstructed_heightmap_diff = add_reconstructed_heightmap_diff_to_obs(obs=ob_dict, env=self.env, goal_mask=self.observation_keys["reconstructed_heightmap_diff"].get("goal_mask", False), verbose=self.verbose)
             # common.insert_after(obs, self.key_mapping("eef_vel_ang")[0], reconstructed_heightmap_diff)
             ob_dict.update(reconstructed_heightmap_diff)
 
