@@ -117,7 +117,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.camera import add_depth_seg_to_obs
-            depth_seg_observations = add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim)
+            depth_seg_observations = add_depth_seg_to_obs(observation=obs, robosuite_env=self.env.sim, camera_config=self.camera_config)
             obs.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
@@ -293,7 +293,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.camera import add_depth_seg_to_obs
-            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim, camera_config=self.camera_config)
             ob_dict.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
@@ -362,7 +362,7 @@ class GymWrapperDictObs(Wrapper, gym.Env):
             or any("depth_seg" in sub for sub in self.observation_keys.keys())
             or any("depth_seg" in sub for sub in self.additional_obs.keys())):
             from sand_gym.utils.camera import add_depth_seg_to_obs
-            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim)
+            depth_seg_observations = add_depth_seg_to_obs(observation=ob_dict, robosuite_env=self.env.sim, camera_config=self.camera_config)
             ob_dict.update(depth_seg_observations)
 
         if (any("reconstructed_heightmap_current" in sub for sub in self.info_observation_keys)
