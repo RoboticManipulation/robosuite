@@ -16,30 +16,27 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=81f6180a" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../_static/documentation_options.js?v=9f1c6d22"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -60,7 +57,6 @@
     <link rel="prev" title="robosuite.controllers.parts.mobile_base package" href="robosuite.controllers.parts.mobile_base.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="1.5" />
   </head>
   
   
@@ -76,8 +72,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../search.html"
       method="get">
@@ -85,6 +92,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -92,8 +100,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -109,8 +117,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -140,17 +147,21 @@
     
     
     <img src="../_static/robosuite_color.png" class="logo__image only-light" alt="robosuite 1.5 documentation - Home"/>
-    <img src="../_static/robosuite_color.png" class="logo__image only-dark pst-js-only" alt="robosuite 1.5 documentation - Home"/>
+    <script>document.write(`<img src="../_static/robosuite_color.png" class="logo__image only-dark" alt="robosuite 1.5 documentation - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
@@ -260,14 +271,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -364,16 +370,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -410,6 +424,33 @@
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.device.Device.start_control"><code class="docutils literal notranslate"><span class="pre">Device.start_control()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.devices.dualsense">robosuite.devices.dualsense module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType"><code class="docutils literal notranslate"><span class="pre">ConnectionType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.BT01"><code class="docutils literal notranslate"><span class="pre">ConnectionType.BT01</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.BT31"><code class="docutils literal notranslate"><span class="pre">ConnectionType.BT31</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">ConnectionType.UNKNOWN</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.USB"><code class="docutils literal notranslate"><span class="pre">ConnectionType.USB</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.to_string"><code class="docutils literal notranslate"><span class="pre">ConnectionType.to_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DSState"><code class="docutils literal notranslate"><span class="pre">DSState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DSState.setDPadState"><code class="docutils literal notranslate"><span class="pre">DSState.setDPadState()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense"><code class="docutils literal notranslate"><span class="pre">DualSense</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.control"><code class="docutils literal notranslate"><span class="pre">DualSense.control</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.control_gripper"><code class="docutils literal notranslate"><span class="pre">DualSense.control_gripper</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.get_controller_state"><code class="docutils literal notranslate"><span class="pre">DualSense.get_controller_state()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.run"><code class="docutils literal notranslate"><span class="pre">DualSense.run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.start_control"><code class="docutils literal notranslate"><span class="pre">DualSense.start_control()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_bt01_report"><code class="docutils literal notranslate"><span class="pre">parse_bt01_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_bt31_report"><code class="docutils literal notranslate"><span class="pre">parse_bt31_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_usb_report"><code class="docutils literal notranslate"><span class="pre">parse_usb_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.scale_to_control"><code class="docutils literal notranslate"><span class="pre">scale_to_control()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.devices.keyboard">robosuite.devices.keyboard module</a></li>
@@ -515,6 +556,176 @@ start receiving commands.</p>
 </dd></dl>
 
 </section>
+<section id="module-robosuite.devices.dualsense">
+<span id="robosuite-devices-dualsense-module"></span><h2>robosuite.devices.dualsense module<a class="headerlink" href="#module-robosuite.devices.dualsense" title="Link to this heading">#</a></h2>
+<p>Driver class for DualSense controller.</p>
+<p>This class provides a driver support to DualSense on macOS.
+In particular, we assume you are using a DualSense Wireless by default.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">ConnectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntFlag</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType.BT01">
+<span class="sig-name descname"><span class="pre">BT01</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType.BT01" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType.BT31">
+<span class="sig-name descname"><span class="pre">BT31</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType.BT31" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType.UNKNOWN">
+<span class="sig-name descname"><span class="pre">UNKNOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType.UNKNOWN" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType.USB">
+<span class="sig-name descname"><span class="pre">USB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType.USB" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.ConnectionType.to_string">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#robosuite.devices.dualsense.ConnectionType.to_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DSState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">DSState</span></span><a class="headerlink" href="#robosuite.devices.dualsense.DSState" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DSState.setDPadState">
+<span class="sig-name descname"><span class="pre">setDPadState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dpad_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#robosuite.devices.dualsense.DSState.setDPadState" title="Link to this definition">#</a></dt>
+<dd><p>Sets the dpad state variables according to the integers that was read from the controller</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dpad_state</strong> (<em>int</em>) – integer number representing the dpad state, actually a 4-bit number,[0,8]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">DualSense</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#robosuite.devices.device.Device" title="robosuite.devices.device.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
+<p>A minimalistic driver class for DualSense with HID library.</p>
+<p>Note: Use hid.enumerate() to view all USB human interface devices (HID).
+Make sure DualSense is detected before running the script.
+You can look up its vendor/product id from this method.</p>
+<p>You can test your DualSense in <a class="reference external" href="https://hardwaretester.com/gamepad">https://hardwaretester.com/gamepad</a> and <a class="reference external" href="https://nondebug.github.io/dualsense/dualsense-explorer.html">https://nondebug.github.io/dualsense/dualsense-explorer.html</a>
+DualSense HID protocol refer to <a class="github reference external" href="https://github.com/nondebug/dualsense">nondebug/dualsense</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="robosuite.environments.html#robosuite.environments.robot_env.RobotEnv" title="robosuite.environments.robot_env.RobotEnv"><em>RobotEnv</em></a>) – The environment which contains the robot(s) to control
+using this device.</p></li>
+<li><p><strong>pos_sensitivity</strong> (<em>float</em>) – Magnitude of input position command scaling</p></li>
+<li><p><strong>rot_sensitivity</strong> (<em>float</em>) – Magnitude of scale input rotation commands scaling</p></li>
+<li><p><strong>reverse_xy</strong> (<em>bool</em>) – Whether to reverse the effect of the x and y axes of the joystick. It is used to handle the case that the left/right and front/back sides of the view are opposite to the LX and LY of the joystick(Push LX up but the robot move left in your view)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense.control">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control</span></span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense.control" title="Link to this definition">#</a></dt>
+<dd><p>Grabs current pose of DualSense</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>6-DoF control value</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense.control_gripper">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">control_gripper</span></span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense.control_gripper" title="Link to this definition">#</a></dt>
+<dd><p>Maps internal states into gripper commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether we’re using single click and hold or not</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense.get_controller_state">
+<span class="sig-name descname"><span class="pre">get_controller_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense.get_controller_state" title="Link to this definition">#</a></dt>
+<dd><p>Grabs the current state of the 3D mouse.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing dpos, orn, unmodified orn, grasp, and reset</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense.run" title="Link to this definition">#</a></dt>
+<dd><p>Listener method that keeps pulling new messages.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.DualSense.start_control">
+<span class="sig-name descname"><span class="pre">start_control</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.DualSense.start_control" title="Link to this definition">#</a></dt>
+<dd><p>Method that should be called externally before controller can
+start receiving commands.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.parse_bt01_report">
+<span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">parse_bt01_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#robosuite.devices.dualsense.DSState" title="robosuite.devices.dualsense.DSState"><span class="pre">DSState</span></a></span></span><a class="headerlink" href="#robosuite.devices.dualsense.parse_bt01_report" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.parse_bt31_report">
+<span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">parse_bt31_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#robosuite.devices.dualsense.DSState" title="robosuite.devices.dualsense.DSState"><span class="pre">DSState</span></a></span></span><a class="headerlink" href="#robosuite.devices.dualsense.parse_bt31_report" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.parse_usb_report">
+<span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">parse_usb_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytearray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#robosuite.devices.dualsense.DSState" title="robosuite.devices.dualsense.DSState"><span class="pre">DSState</span></a></span></span><a class="headerlink" href="#robosuite.devices.dualsense.parse_usb_report" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="robosuite.devices.dualsense.scale_to_control">
+<span class="sig-prename descclassname"><span class="pre">robosuite.devices.dualsense.</span></span><span class="sig-name descname"><span class="pre">scale_to_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.devices.dualsense.scale_to_control" title="Link to this definition">#</a></dt>
+<dd><p>Normalize raw HID readings to target range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>int</em>) – Raw reading from HID</p></li>
+<li><p><strong>axis_scale</strong> (<em>float</em>) – (Inverted) scaling factor for mapping raw input value</p></li>
+<li><p><strong>min_v</strong> (<em>float</em>) – Minimum limit after scaling</p></li>
+<li><p><strong>max_v</strong> (<em>float</em>) – Maximum limit after scaling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Clipped, scaled input from HID</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-robosuite.devices.keyboard">
 <span id="robosuite-devices-keyboard-module"></span><h2>robosuite.devices.keyboard module<a class="headerlink" href="#module-robosuite.devices.keyboard" title="Link to this heading">#</a></h2>
 </section>
@@ -611,8 +822,7 @@ start receiving commands.</p>
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -634,6 +844,33 @@ start receiving commands.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.device.Device.start_control"><code class="docutils literal notranslate"><span class="pre">Device.start_control()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.devices.dualsense">robosuite.devices.dualsense module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType"><code class="docutils literal notranslate"><span class="pre">ConnectionType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.BT01"><code class="docutils literal notranslate"><span class="pre">ConnectionType.BT01</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.BT31"><code class="docutils literal notranslate"><span class="pre">ConnectionType.BT31</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.UNKNOWN"><code class="docutils literal notranslate"><span class="pre">ConnectionType.UNKNOWN</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.USB"><code class="docutils literal notranslate"><span class="pre">ConnectionType.USB</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.ConnectionType.to_string"><code class="docutils literal notranslate"><span class="pre">ConnectionType.to_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DSState"><code class="docutils literal notranslate"><span class="pre">DSState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DSState.setDPadState"><code class="docutils literal notranslate"><span class="pre">DSState.setDPadState()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense"><code class="docutils literal notranslate"><span class="pre">DualSense</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.control"><code class="docutils literal notranslate"><span class="pre">DualSense.control</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.control_gripper"><code class="docutils literal notranslate"><span class="pre">DualSense.control_gripper</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.get_controller_state"><code class="docutils literal notranslate"><span class="pre">DualSense.get_controller_state()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.run"><code class="docutils literal notranslate"><span class="pre">DualSense.run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.DualSense.start_control"><code class="docutils literal notranslate"><span class="pre">DualSense.start_control()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_bt01_report"><code class="docutils literal notranslate"><span class="pre">parse_bt01_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_bt31_report"><code class="docutils literal notranslate"><span class="pre">parse_bt31_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.parse_usb_report"><code class="docutils literal notranslate"><span class="pre">parse_usb_report()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.devices.dualsense.scale_to_control"><code class="docutils literal notranslate"><span class="pre">scale_to_control()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.devices.keyboard">robosuite.devices.keyboard module</a></li>
@@ -698,8 +935,8 @@ By the robosuite core team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
