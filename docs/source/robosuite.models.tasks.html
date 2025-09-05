@@ -430,7 +430,6 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.models.tasks.task.Task.site_ids_to_instances"><code class="docutils literal notranslate"><span class="pre">Task.site_ids_to_instances</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.models.tasks.task.get_subtree_geom_ids_by_group"><code class="docutils literal notranslate"><span class="pre">get_subtree_geom_ids_by_group()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.models.tasks">Module contents</a></li>
@@ -570,25 +569,6 @@ dict: Mapping from site IDs in sim to specific class instance names</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="robosuite.models.tasks.task.get_subtree_geom_ids_by_group">
-<span class="sig-prename descclassname"><span class="pre">robosuite.models.tasks.task.</span></span><span class="sig-name descname"><span class="pre">get_subtree_geom_ids_by_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MjModel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#robosuite.models.tasks.task.get_subtree_geom_ids_by_group" title="Link to this definition">#</a></dt>
-<dd><p>Get all geoms belonging to a subtree starting at a given body, filtered by group.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – MuJoCo model.</p></li>
-<li><p><strong>body_id</strong> – ID of body where subtree starts.</p></li>
-<li><p><strong>group</strong> – Group ID to filter geoms.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list containing all subtree geom ids in the specified group.</p>
-</dd>
-</dl>
-<p>Adapted from <a class="github reference external" href="https://github.com/kevinzakka/mink/blob/main/mink/utils.py">kevinzakka/mink</a></p>
-</dd></dl>
-
 </section>
 <section id="module-robosuite.models.tasks">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-robosuite.models.tasks" title="Link to this heading">#</a></h2>
@@ -659,7 +639,6 @@ dict: Mapping from site IDs in sim to specific class instance names</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.models.tasks.task.Task.site_ids_to_instances"><code class="docutils literal notranslate"><span class="pre">Task.site_ids_to_instances</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.models.tasks.task.get_subtree_geom_ids_by_group"><code class="docutils literal notranslate"><span class="pre">get_subtree_geom_ids_by_group()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.models.tasks">Module contents</a></li>
