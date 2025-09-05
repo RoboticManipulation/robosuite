@@ -252,6 +252,12 @@ class MujocoEnv(metaclass=EnvMeta):
         if self.mujoco_passive_viewer:
             self.mujoco_passive_viewer_instance = view.launch_passive(self.sim.model._model, self.sim.data._data)
 
+    def add_visual_elements_to_mujoco_passive_viewer(self, vis_elem):
+        if self.mujoco_passive_viewer_instance is not None:
+            if vis_elem is not None:
+                self.sim.add_visual_elements_to_scene(self.mujoco_passive_viewer_instance, vis_elem["geoms"], vis_elem["geom_type"])
+            self.mujoco_passive_viewer_instance.sync()
+            
     def sync_mujoco_passive_viewer(self):
         if self.mujoco_passive_viewer_instance is not None:
             self.mujoco_passive_viewer_instance.sync()

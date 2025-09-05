@@ -1101,6 +1101,63 @@ class MjSim:
         """Step2 (after actions are set)."""
         mujoco.mj_step2(self.model._model, self.data._data)
 
+    def add_visual_elements_to_scene(self, viewer_instance, geoms, geom_type, color=[1, 0, 0, 0.5]):
+        if geom_type == mujoco.mjtGeom.mjGEOM_LINE:
+            viewer_instance.user_scn.ngeom = 0  # Reset the number of geometries
+            for iter, geom in geoms.items():
+                start = geom[0]
+                end = geom[1]
+                # Compute the direction of the ray
+                direction = end - start
+                length = np.linalg.norm(direction)
+                
+                # Compute the position as the midpoint between start and end
+                pos = (start + end) / 2.0
+                
+                # Compute the rotation matrix to align the capsule with the ray direction
+                direction_normalized = direction / length  # Normalize the direction vector
+                mat = np.eye(3).flatten()  # Initialize with the identity matrix flattened
+                
+                if not np.allclose(direction_normalized, [0, 0, 1]):
+                    # Determine the rotation axis
+                    axis = np.cross([0, 0, 1], direction_normalized)
+                    angle = np.arccos(np.dot([0, 0, 1], direction_normalized))
+                    
+                    if np.linalg.norm(axis) > 1e-6:
+                        axis = axis / np.linalg.norm(axis)
+                        kx, ky, kz = axis
+                        c = np.cos(angle)
+                        s = np.sin(angle)
+                        R = np.array([
+                            [c + (1 - c) * kx * kx, (1 - c) * kx * ky - s * kz, (1 - c) * kx * kz + s * ky],
+                            [(1 - c) * ky * kx + s * kz, c + (1 - c) * ky * ky, (1 - c) * ky * kz - s * kx],
+                            [(1 - c) * kz * kx - s * ky, (1 - c) * kz * ky + s * kx, c + (1 - c) * kz * kz]
+                        ])
+                        mat = R.flatten()
+                
+                # Ensure mat is a 1D array with length 9
+                if mat.size != 9:
+                    raise ValueError(f"Matrix shape error: Expected length 9, got {mat.size}")
+
+                # Initialize geometry as a capsule with the computed parameters
+                mujoco.mjv_initGeom(
+                    viewer_instance.user_scn.geoms[iter],
+                    type=mujoco.mjtGeom.mjGEOM_LINE,  # Capsule type for line-like geometry
+                    size=[0.001, 0, 0],  # Half the length of the ray
+                    pos=pos,  # Midpoint position
+                    mat=mat,  # Rotation matrix
+                    rgba=color  # Red color
+                )
+                mujoco.mjv_connector(
+                    viewer_instance.user_scn.geoms[iter],
+                    mujoco.mjtGeom.mjGEOM_LINE,
+                    1, # line width in pixels
+                    start,
+                    end
+                )
+            
+            viewer_instance.user_scn.ngeom = len(geoms)  # Update the number of geometries
+
     def render(
         self,
         width=None,
