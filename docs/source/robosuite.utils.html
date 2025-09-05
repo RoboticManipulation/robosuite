@@ -1546,8 +1546,10 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.utils.sim_utils">robosuite.utils.sim_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.add_visual_element"><code class="docutils literal notranslate"><span class="pre">add_visual_element()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.check_contact"><code class="docutils literal notranslate"><span class="pre">check_contact()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.get_contacts"><code class="docutils literal notranslate"><span class="pre">get_contacts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.update_mujoco_heightfield"><code class="docutils literal notranslate"><span class="pre">update_mujoco_heightfield()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.utils.traj_utils">robosuite.utils.traj_utils module</a><ul class="nav section-nav flex-column">
@@ -9495,6 +9497,11 @@ z-offset of the current sampled objectâ€™s bottom_offset + the reference objectâ
 <span id="robosuite-utils-sim-utils-module"></span><h2>robosuite.utils.sim_utils module<a class="headerlink" href="#module-robosuite.utils.sim_utils" title="Link to this heading">#</a></h2>
 <p>Collection of useful simulation utilities</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="robosuite.utils.sim_utils.add_visual_element">
+<span class="sig-prename descclassname"><span class="pre">robosuite.utils.sim_utils.</span></span><span class="sig-name descname"><span class="pre">add_visual_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vis_elem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.utils.sim_utils.add_visual_element" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="robosuite.utils.sim_utils.check_contact">
 <span class="sig-prename descclassname"><span class="pre">robosuite.utils.sim_utils.</span></span><span class="sig-name descname"><span class="pre">check_contact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoms_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoms_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.utils.sim_utils.check_contact" title="Link to this definition">#</a></dt>
 <dd><p>Finds contact between two geom groups.
@@ -9540,6 +9547,11 @@ geom names currently in contact with that model (excluding the geoms that are pa
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="robosuite.utils.sim_utils.update_mujoco_heightfield">
+<span class="sig-prename descclassname"><span class="pre">robosuite.utils.sim_utils.</span></span><span class="sig-name descname"><span class="pre">update_mujoco_heightfield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">heightfield</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#robosuite.utils.sim_utils.update_mujoco_heightfield" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-robosuite.utils.traj_utils">
@@ -11555,8 +11567,10 @@ between 0 and 1.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.utils.sim_utils">robosuite.utils.sim_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.add_visual_element"><code class="docutils literal notranslate"><span class="pre">add_visual_element()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.check_contact"><code class="docutils literal notranslate"><span class="pre">check_contact()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.get_contacts"><code class="docutils literal notranslate"><span class="pre">get_contacts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#robosuite.utils.sim_utils.update_mujoco_heightfield"><code class="docutils literal notranslate"><span class="pre">update_mujoco_heightfield()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-robosuite.utils.traj_utils">robosuite.utils.traj_utils module</a><ul class="nav section-nav flex-column">
