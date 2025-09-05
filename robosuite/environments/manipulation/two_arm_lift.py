@@ -172,7 +172,8 @@ class TwoArmLift(TwoArmEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # settings for table top
         self.table_full_size = table_full_size
@@ -215,7 +216,8 @@ class TwoArmLift(TwoArmEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
-            mujoco_passive_viewer=mujoco_passive_viewer,
+            seed=seed,
+            mujoco_passive_viewer=mujoco_passive_viewer
         )
 
     def reward(self, action=None):
@@ -352,6 +354,7 @@ class TwoArmLift(TwoArmEnv):
                 ensure_valid_placement=True,
                 reference_pos=self.table_offset,
                 rotation=(np.pi + -np.pi / 3, np.pi + np.pi / 3),
+                rng=self.rng,
             )
 
         # task includes arena, robot, and objects of interest

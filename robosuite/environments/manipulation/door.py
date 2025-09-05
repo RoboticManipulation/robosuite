@@ -33,6 +33,12 @@ class Door(ManipulationEnv):
             overrides the default gripper. Should either be single str if same gripper type is to be used for all
             robots or else it should be a list of the same length as "robots" param
 
+        base_types (None or str or list of str): type of base, used to instantiate base models from base factory.
+            Default is "default", which is the default base associated with the robot(s) the 'robots' specification.
+            None results in no base, and any other (valid) model overrides the default base. Should either be
+            single str if same base type is to be used for all robots or else it should be a list of the same
+            length as "robots" param
+
         initialization_noise (dict or list of dict): Dict containing the initialization noise parameters.
             The expected keys and corresponding value types are specified below:
 
@@ -138,6 +144,7 @@ class Door(ManipulationEnv):
         env_configuration="default",
         controller_configs=None,
         gripper_types="default",
+        base_types="default",
         initialization_noise="default",
         use_latch=True,
         use_camera_obs=True,
@@ -163,7 +170,8 @@ class Door(ManipulationEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # settings for table top (hardcoded since it's not an essential part of the environment)
         self.table_full_size = (0.8, 0.3, 0.05)
@@ -184,7 +192,7 @@ class Door(ManipulationEnv):
             robots=robots,
             env_configuration=env_configuration,
             controller_configs=controller_configs,
-            base_types="default",
+            base_types=base_types,
             gripper_types=gripper_types,
             initialization_noise=initialization_noise,
             use_camera_obs=use_camera_obs,
@@ -206,6 +214,7 @@ class Door(ManipulationEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
+            seed=seed,
             mujoco_passive_viewer=mujoco_passive_viewer
         )
 
@@ -307,6 +316,7 @@ class Door(ManipulationEnv):
                 ensure_object_boundary_in_range=False,
                 ensure_valid_placement=True,
                 reference_pos=self.table_offset,
+                rng=self.rng,
             )
 
         # task includes arena, robot, and objects of interest

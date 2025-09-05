@@ -173,7 +173,8 @@ class TwoArmTransport(TwoArmEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # settings for table top
         self.tables_boundary = tables_boundary
@@ -220,6 +221,7 @@ class TwoArmTransport(TwoArmEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
+            seed=seed,
             mujoco_passive_viewer=mujoco_passive_viewer
         )
 
@@ -350,8 +352,9 @@ class TwoArmTransport(TwoArmEnv):
             handle_density=150.0,
             handle_friction=4.0,
             head_density_ratio=1.5,
+            rng=self.rng,
         )
-        trash = BoxObject(name="trash", size=[0.02, 0.02, 0.02], material=redwood)
+        trash = BoxObject(name="trash", size=[0.02, 0.02, 0.02], material=redwood, rng=self.rng)
         self.transport = TransportGroup(
             name="transport",
             payload=payload,
@@ -410,6 +413,7 @@ class TwoArmTransport(TwoArmEnv):
                     ensure_valid_placement=False,
                     reference_pos=table_pos,
                     z_offset=0.001,
+                    rng=self.rng,
                 )
             )
 

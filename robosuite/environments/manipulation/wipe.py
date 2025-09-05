@@ -65,6 +65,12 @@ class Wipe(ManipulationEnv):
             For this environment, setting a value other than the default ("WipingGripper") will raise an
             AssertionError, as this environment is not meant to be used with any other alternative gripper.
 
+        base_types (None or str or list of str): type of base, used to instantiate base models from base factory.
+            Default is "default", which is the default base associated with the robot(s) the 'robots' specification.
+            None results in no base, and any other (valid) model overrides the default base. Should either be
+            single str if same base type is to be used for all robots or else it should be a list of the same
+            length as "robots" param
+
         initialization_noise (dict or list of dict): Dict containing the initialization noise parameters.
             The expected keys and corresponding value types are specified below:
 
@@ -169,6 +175,7 @@ class Wipe(ManipulationEnv):
         env_configuration="default",
         controller_configs=None,
         gripper_types="WipingGripper",
+        base_types="default",
         initialization_noise="default",
         use_camera_obs=True,
         use_object_obs=True,
@@ -193,7 +200,8 @@ class Wipe(ManipulationEnv):
         task_config=None,
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # Assert that the gripper type is None
         assert (
@@ -228,8 +236,8 @@ class Wipe(ManipulationEnv):
         self.table_full_size = self.task_config["table_full_size"]
         self.table_height = self.task_config["table_height"]
         self.table_height_std = self.task_config["table_height_std"]
-        delta_height = min(0, np.random.normal(self.table_height, self.table_height_std))  # sample variation in height
-        self.table_offset = np.array(self.task_config["table_offset"]) + np.array((0, 0, delta_height))
+        self.delta_height = None  # sample variation in height done in load_model
+        self.table_offset = np.array(self.task_config["table_offset"])
         self.table_friction = self.task_config["table_friction"]
         self.table_friction_std = self.task_config["table_friction_std"]
         self.line_width = self.task_config["line_width"]
@@ -291,6 +299,7 @@ class Wipe(ManipulationEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
+            seed=seed,
             mujoco_passive_viewer=mujoco_passive_viewer
         )
 
@@ -527,7 +536,9 @@ class Wipe(ManipulationEnv):
 
         # Get robot's contact geoms
         self.robot_contact_geoms = self.robots[0].robot_model.contact_geoms
-
+        if self.delta_height is None:
+            self.delta_height = self.rng.normal(self.table_height, self.table_height_std)
+        self.table_offset[2] += self.delta_height
         mujoco_arena = WipeArena(
             table_full_size=self.table_full_size,
             table_friction=self.table_friction,
@@ -537,6 +548,7 @@ class Wipe(ManipulationEnv):
             num_markers=self.num_markers,
             line_width=self.line_width,
             two_clusters=self.two_clusters,
+            rng=self.rng,
         )
 
         # Arena always gets set to zero origin

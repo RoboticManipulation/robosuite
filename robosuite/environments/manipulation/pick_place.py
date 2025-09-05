@@ -44,6 +44,12 @@ class PickPlace(ManipulationEnv):
             overrides the default gripper. Should either be single str if same gripper type is to be used for all
             robots or else it should be a list of the same length as "robots" param
 
+        base_types (None or str or list of str): type of base, used to instantiate base models from base factory.
+            Default is "default", which is the default base associated with the robot(s) the 'robots' specification.
+            None results in no base, and any other (valid) model overrides the default base. Should either be
+            single str if same base type is to be used for all robots or else it should be a list of the same
+            length as "robots" param
+
         initialization_noise (dict or list of dict): Dict containing the initialization noise parameters.
             The expected keys and corresponding value types are specified below:
 
@@ -173,6 +179,7 @@ class PickPlace(ManipulationEnv):
         env_configuration="default",
         controller_configs=None,
         gripper_types="default",
+        base_types="default",
         initialization_noise="default",
         table_full_size=(0.39, 0.49, 0.82),
         table_friction=(1, 0.005, 0.0001),
@@ -204,7 +211,8 @@ class PickPlace(ManipulationEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # task settings
         self.single_object_mode = single_object_mode
@@ -239,7 +247,7 @@ class PickPlace(ManipulationEnv):
             robots=robots,
             env_configuration=env_configuration,
             controller_configs=controller_configs,
-            base_types="default",
+            base_types=base_types,
             gripper_types=gripper_types,
             initialization_noise=initialization_noise,
             use_camera_obs=use_camera_obs,
@@ -261,7 +269,8 @@ class PickPlace(ManipulationEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
-            mujoco_passive_viewer=mujoco_passive_viewer,
+            seed=seed,
+            mujoco_passive_viewer=mujoco_passive_viewer
         )
 
     def reward(self, action=None):
@@ -441,6 +450,7 @@ class PickPlace(ManipulationEnv):
                 ensure_valid_placement=True,
                 reference_pos=self.bin1_pos,
                 z_offset=self.z_offset,
+                rng=self.rng,
             )
         )
 
@@ -479,6 +489,7 @@ class PickPlace(ManipulationEnv):
                     ensure_valid_placement=False,
                     reference_pos=self.bin1_pos,
                     z_offset=self.bin2_pos[2] - self.bin1_pos[2],
+                    rng=self.rng,
                 )
             )
             index += 1
@@ -706,7 +717,7 @@ class PickPlace(ManipulationEnv):
         # Move objects out of the scene depending on the mode
         obj_names = {obj.name for obj in self.objects}
         if self.single_object_mode == 1:
-            self.obj_to_use = random.choice(list(obj_names))
+            self.obj_to_use = self.rng.choice(list(obj_names))
             for obj_type, i in self.object_to_id.items():
                 if obj_type.lower() in self.obj_to_use.lower():
                     self.object_id = i

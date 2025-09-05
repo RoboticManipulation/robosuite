@@ -159,9 +159,11 @@ class NutAssembly(ManipulationEnv):
         env_configuration="default",
         controller_configs=None,
         gripper_types="default",
+        base_types="default",
         initialization_noise="default",
         table_full_size=(0.8, 0.8, 0.05),
         table_friction=(1, 0.005, 0.0001),
+        table_offset=(0, 0, 0.82),
         use_camera_obs=True,
         use_object_obs=True,
         reward_scale=1.0,
@@ -187,7 +189,8 @@ class NutAssembly(ManipulationEnv):
         camera_segmentations=None,  # {None, instance, class, element}
         renderer="mjviewer",
         renderer_config=None,
-        mujoco_passive_viewer=False,
+        seed=None,
+        mujoco_passive_viewer=False
     ):
         # task settings
         self.single_object_mode = single_object_mode
@@ -203,7 +206,7 @@ class NutAssembly(ManipulationEnv):
         # settings for table top
         self.table_full_size = table_full_size
         self.table_friction = table_friction
-        self.table_offset = np.array((0, 0, 0.82))
+        self.table_offset = table_offset
 
         # reward configuration
         self.reward_scale = reward_scale
@@ -219,7 +222,7 @@ class NutAssembly(ManipulationEnv):
             robots=robots,
             env_configuration=env_configuration,
             controller_configs=controller_configs,
-            base_types="default",
+            base_types=base_types,
             gripper_types=gripper_types,
             initialization_noise=initialization_noise,
             use_camera_obs=use_camera_obs,
@@ -241,7 +244,8 @@ class NutAssembly(ManipulationEnv):
             camera_segmentations=camera_segmentations,
             renderer=renderer,
             renderer_config=renderer_config,
-            mujoco_passive_viewer=mujoco_passive_viewer,
+            seed=seed,
+            mujoco_passive_viewer=mujoco_passive_viewer
         )
 
     def reward(self, action=None):
@@ -424,6 +428,7 @@ class NutAssembly(ManipulationEnv):
                         ensure_valid_placement=True,
                         reference_pos=self.table_offset,
                         z_offset=0.02,
+                        rng=self.rng,
                     )
                 )
         # Reset sampler before adding any new samplers / objects
@@ -597,7 +602,7 @@ class NutAssembly(ManipulationEnv):
         # Move objects out of the scene depending on the mode
         nut_names = {nut.name for nut in self.nuts}
         if self.single_object_mode == 1:
-            self.obj_to_use = random.choice(list(nut_names))
+            self.obj_to_use = self.rng.choice(list(nut_names))
             for nut_type, i in self.nut_to_id.items():
                 if nut_type.lower() in self.obj_to_use.lower():
                     self.nut_id = i
