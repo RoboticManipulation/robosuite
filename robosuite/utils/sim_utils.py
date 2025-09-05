@@ -65,3 +65,12 @@ def get_contacts(sim, model):
         elif g2 in model.contact_geoms and g1 not in model.contact_geoms:
             contact_set.add(g1)
     return contact_set
+
+def add_visual_element(env, vis_elem):
+    env.add_visual_elements_to_mujoco_passive_viewer(vis_elem)
+
+def update_mujoco_heightfield(env, heightfield):
+    env.sim.model._model.hfield_data = heightfield
+    env.sim.forward()
+    env.sim.step()
+    env.sync_mujoco_passive_viewer()
