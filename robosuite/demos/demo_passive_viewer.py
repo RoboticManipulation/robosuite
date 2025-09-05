@@ -9,6 +9,7 @@ env = suite.make(
     has_offscreen_renderer=False,
     use_camera_obs=False,
     hard_reset=False,
+    ignore_done=True,
     mujoco_passive_viewer=True
 )
 
