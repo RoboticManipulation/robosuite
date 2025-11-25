@@ -124,6 +124,12 @@ def get_real_depth_map(sim, depth_map):
     near = sim.model.vis.map.znear * extent
     return near / (1.0 - depth_map * (1.0 - near / far))
 
+def parse_intrinsics(K):
+    fx = K[0, 0]
+    fy = K[1, 1]
+    cx = K[0, 2]
+    cy = K[1, 2]
+    return fx, fy, cx, cy
 
 def project_points_from_world_to_camera(points, world_to_camera_transform, camera_height, camera_width):
     """
